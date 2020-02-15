@@ -1,11 +1,122 @@
-const element = React.createElement("div", {
-  className: "container"
-}, React.createElement("h1", null, "Garrett Hughes"), React.createElement("img", {
-  className: "headshot",
-  src: "https://garretthughesphotography.com/static/221fbe056dde2bdeb1f89a4c2f36dd69/51822/garrett-hughes-fishing-photography.jpg",
-  alt: "Garrett fishing picture"
-}), React.createElement("p", null, "I'm a software engineer, photographer, and avid outdoorsman based out of San Diego. When I'm not working on updating websites and increasing SEO initiatives, you'll find me in the woods exploring with my Land Rover, surfing, fishing or snowboarding."), React.createElement("a", {
-  href: "https://github.com/garrettjmu",
-  target: "_blank"
-}, React.createElement("h2", null, "View my github repo")));
+class ProductList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      products: []
+    };
+  }
+
+  addProduct(product) {
+    const tempProductList = this.state.products;
+    tempProductList.push(product);
+    this.setState({
+      products: tempProductList
+    });
+  }
+
+  render() {
+    return React.createElement("div", null, React.createElement(ProductTable, {
+      products: this.state.products
+    }), React.createElement(ProductAdd, {
+      addProduct: product => this.addProduct(product)
+    }));
+  }
+
+}
+
+function ProductTable({
+  products
+}) {
+  const selectOptions = ["Product Name", "Price", "Category", "Image"];
+  return React.createElement(React.Fragment, null, React.createElement("h1", null, "My Company Inventory"), React.createElement("h2", null, "Showing all available products"), React.createElement("hr", null), React.createElement("table", null, React.createElement("thead", null, React.createElement("tr", null, selectOptions.map((option, index) => React.createElement("th", {
+    key: index
+  }, option)))), React.createElement("tbody", null, products.map((product, index) => React.createElement(ProductRow, {
+    product: product,
+    index: index,
+    key: index
+  })))));
+}
+
+function ProductRow({
+  index,
+  product
+}) {
+  return React.createElement("tr", {
+    key: index
+  }, React.createElement("th", null, product.name), React.createElement("th", null, "$", product.price), React.createElement("th", null, product.category), React.createElement("th", null, React.createElement("a", {
+    href: product.image,
+    target: "_blank"
+  }, "View")));
+}
+
+class ProductAdd extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      price: '',
+      category: '',
+      name: '',
+      image: ''
+    };
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
+    const product = {
+      name: this.state.name,
+      price: this.state.price,
+      category: this.state.category,
+      image: this.state.image
+    };
+    this.props.addProduct(product);
+    this.setState({
+      name: '',
+      price: '',
+      category: '',
+      image: ''
+    });
+  }
+
+  render() {
+    const categoryValues = ["", "Shirts", "Jeans", "Jackets", "Sweaters", "Accessories"];
+    return React.createElement(React.Fragment, null, React.createElement("p", null, "Add a new product to Inventory"), React.createElement("hr", null), React.createElement("form", null, "Category ", React.createElement("br", null), React.createElement("select", {
+      name: "category",
+      value: this.state.category,
+      onChange: e => this.setState({
+        category: e.target.value
+      })
+    }, categoryValues.map((value, index) => React.createElement("option", {
+      value: value,
+      key: index
+    }, value))), React.createElement("br", null), "Product Name ", React.createElement("br", null), React.createElement("input", {
+      type: "text",
+      value: this.state.name,
+      name: "name",
+      onChange: e => this.setState({
+        name: e.target.value
+      })
+    }), React.createElement("br", null), "Price Per Unit ", React.createElement("br", null), React.createElement("input", {
+      type: "text",
+      name: "price",
+      value: `$${this.state.price}`,
+      onChange: e => this.setState({
+        price: e.target.value.replace(/\$/g, '')
+      })
+    }), React.createElement("br", null), "Image URL ", React.createElement("br", null), React.createElement("input", {
+      type: "text",
+      name: "image",
+      value: this.state.image,
+      onChange: e => this.setState({
+        image: e.target.value
+      })
+    }), React.createElement("br", null), React.createElement("input", {
+      type: "submit",
+      value: "Add Product",
+      onClick: e => this.onSubmit(e)
+    })));
+  }
+
+}
+
+const element = React.createElement(ProductList, null);
 ReactDOM.render(element, document.getElementById('root'));

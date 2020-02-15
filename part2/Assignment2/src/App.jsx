@@ -1,21 +1,129 @@
-const element = (
-  <div className="container">
-    <h1>Garrett Hughes</h1>
-    <img className="headshot"
-         src="https://garretthughesphotography.com/static/221fbe056dde2bdeb1f89a4c2f36dd69/51822/garrett-hughes-fishing-photography.jpg"
-         alt="Garrett fishing picture" />
+class ProductList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {products: []};
+    }
 
-    <p>
-      I'm a software engineer, photographer, and avid outdoorsman based out of San Diego. When I'm not
-      working on updating websites and increasing SEO initiatives, you'll find me in the woods exploring with my
-      Land Rover, surfing, fishing or snowboarding.
-    </p>
-    <a href="https://github.com/garrettjmu" target="_blank">
-      <h2>
-        View my github repo
-      </h2>
-    </a>
-  </div>
-)
+    addProduct(product) {
+        const tempProductList = this.state.products;
+        tempProductList.push(product);
+        this.setState({products: tempProductList})
+    }
+
+    render() {
+        return (
+            <div>
+                <ProductTable products={this.state.products}/>
+                <ProductAdd addProduct={(product) => this.addProduct(product)}/>
+            </div>
+        )
+    }
+}
+
+function ProductTable({products}) {
+    const selectOptions = ["Product Name", "Price", "Category", "Image"];
+
+    return (
+        <React.Fragment>
+            <h1>My Company Inventory</h1>
+            <h2>Showing all available products</h2>
+            <hr/>
+            <table>
+                <thead>
+                <tr>
+                    {selectOptions.map((option, index) => <th key={index}>{option}</th>)}
+                </tr>
+                </thead>
+                <tbody>
+                {products.map((product, index) => <ProductRow product={product} index={index} key={index}/>)}
+                </tbody>
+            </table>
+        </React.Fragment>
+    )
+}
+
+function ProductRow({index, product}) {
+    return (
+        <tr key={index}>
+            <th>{product.name}</th>
+            <th>${product.price}</th>
+            <th>{product.category}</th>
+            <th>
+                <a href={product.image} target="_blank">
+                    View
+                </a>
+            </th>
+        </tr>
+    )
+}
+
+class ProductAdd extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            price: '',
+            category: '',
+            name: '',
+            image: ''
+        };
+    }
+
+    onSubmit(e) {
+        e.preventDefault();
+
+        const product = {
+            name: this.state.name,
+            price: this.state.price,
+            category: this.state.category,
+            image: this.state.image
+        };
+
+        this.props.addProduct(product);
+        this.setState({
+            name: '',
+            price: '',
+            category: '',
+            image: ''
+        })
+    }
+
+    render() {
+        const categoryValues = ["", "Shirts", "Jeans", "Jackets", "Sweaters", "Accessories"];
+        return (
+            <React.Fragment>
+                <p>Add a new product to Inventory</p>
+                <hr/>
+                <form>
+                    Category <br/>
+                    <select name="category" value={this.state.category}
+                            onChange={(e) => this.setState({category: e.target.value})}>
+                        {categoryValues.map((value, index) => (
+                            <option value={value} key={index}>
+                                {value}
+                            </option>
+                        ))}
+                    </select>
+                    <br/>
+                    Product Name <br/>
+                    <input type="text" value={this.state.name} name="name"
+                           onChange={(e) => this.setState({name: e.target.value})}/>
+                    <br/>
+                    Price Per Unit <br/>
+                    <input type="text" name="price" value={`$${this.state.price}`}
+                           onChange={(e) => this.setState({price: e.target.value.replace(/\$/g, '')})}/>
+                    <br/>
+                    Image URL <br/>
+                    <input type="text" name="image" value={this.state.image}
+                           onChange={(e) => this.setState({image: e.target.value})}/>
+                    <br/>
+                    <input type="submit" value="Add Product" onClick={(e) => this.onSubmit(e)}/>
+                </form>
+            </React.Fragment>
+        )
+    }
+}
+
+
+const element = <ProductList/>
 
 ReactDOM.render(element, document.getElementById('root'))
