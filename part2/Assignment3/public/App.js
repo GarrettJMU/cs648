@@ -6,12 +6,53 @@ class ProductList extends React.Component {
     };
   }
 
-  addProduct(product) {
-    const tempProductList = this.state.products;
-    tempProductList.push(product);
-    this.setState({
-      products: tempProductList
+  componentDidMount() {
+    this.loadData();
+  }
+
+  async loadData() {
+    const query = `query {
+      productList {
+        id category name
+        price image
+      }
+    }`;
+    const response = await fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query
+      })
     });
+    const body = await response.text();
+    const result = await JSON.parse(body);
+    let results = result.data.productList;
+    this.setState({
+      products: results
+    });
+  }
+
+  async addProduct(product) {
+    const query = `mutation productAdd($product: ProductInputs!) {
+      productAdd(product: $product) {
+        id
+      }
+    }`;
+    await fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query,
+        variables: {
+          product
+        }
+      })
+    });
+    this.loadData();
   }
 
   render() {
@@ -64,7 +105,7 @@ class ProductAdd extends React.Component {
     e.preventDefault();
     const product = {
       name: this.state.name,
-      price: this.state.price,
+      price: parseInt(this.state.price),
       category: this.state.category,
       image: this.state.image
     };

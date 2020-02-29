@@ -1,7 +1,7 @@
 {
-  "name": "Assignment2",
+  "name": "Assignment3",
   "version": "1.0.0",
-  "description": "CS648.2 Assignment 2",
+  "description": "CS648.2 Assignment 3",
   "main": "index.js",
   "scripts": {
     "start": "nodemon -w server server/server.js",
@@ -16,7 +16,10 @@
   "author": "garretthughes3@gmail.com",
   "license": "ISC",
   "dependencies": {
+    "apollo-server-express": "^2.10.1",
     "express": "^4.16.4",
+    "fs": "^0.0.1-security",
+    "graphql": "^14.6.0",
     "nodemon": "^1.18.9"
   },
   "devDependencies": {
