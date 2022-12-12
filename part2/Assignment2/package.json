@@ -16,7 +16,7 @@
   "author": "garretthughes3@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "nodemon": "^1.18.9"
   },
   "devDependencies": {
